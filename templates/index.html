@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+</head>
+<body>
+    <h1>Todo App</h1>
+    <div>
+        <input type="text" id="taskInput" placeholder="Enter task">
+        <button onclick="addTask()">Add Task</button>
+    </div>
+    <br>
+    <table id="taskTable" border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody id="taskList">
+        </tbody>
+    </table>
+
+    <script>
+        async function addTask() {
+            const title = document.getElementById("taskInput").value;
+            const response = await fetch('/todos/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title: title, description: "" })
+            });
+            if (response.ok) {
+                const task = await response.json();
+                const taskList = document.getElementById("taskList");
+                const row = taskList.insertRow();
+                row.innerHTML = `<td>${task.id}</td><td>${task.title}</td><td>${task.description}</td>`;
+            } else {
+                alert("Failed to add task");
+            }
+            document.getElementById("taskInput").value = '';
+        }
+
+        async function loadTasks() {
+            const response = await fetch('/todos/');
+            if (response.ok) {
+                const tasks = await response.json();
+                const taskList = document.getElementById("taskList");
+                tasks.forEach(task => {
+                    const row = taskList.insertRow();
+                    row.innerHTML = `<td>${task.id}</td><td>${task.title}</td><td>${task.description}</td>`;
+                });
+            } else {
+                alert("Failed to load tasks");
+            }
+        }
+
+        loadTasks();
+    </script>
+</body>
+</html>
