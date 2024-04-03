@@ -98,3 +98,4 @@ async def show_dashboard(request: Request, db: Session = Depends(get_db)):
         raise HTTPException(status_code=401, detail="User not found")
     return templates.TemplateResponse("dashboard.html", {"request": request, "user": user})
 
+# Adding this line to test
